@@ -1,0 +1,9 @@
+---
+- name: installing ssh key
+  authorized_key: user=administrator key="{{ lookup('file', '/home/administrator/.ssh/id_rsa.pub') }}" state=present
+  become: yes  
+
+- name: copying sshd configuration
+  template: backup=yes src=sshd_config dest=/etc/ssh/sshd_config
+  notify: restart ssh
+  become: yes

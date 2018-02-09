@@ -1,0 +1,40 @@
+---
+
+#For Ubuntu 16.04
+- name: downloading zabbix repositories
+  get_url: url=http://repo.zabbix.com/zabbix/3.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.0-1+xenial_all.deb dest=/home/administrator/ #el usuario puede ser una posible variable
+  become: yes
+
+- name: installing zabbix repositories
+  apt: deb=/home/administrator/zabbix-release_3.0-1+xenial_all.deb state=present
+  become: yes
+
+#For ubuntu 14.04
+#- name: downloading zabbix repositories
+#  shell: wget http://repo.zabbix.com/zabbix/3.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_3.0-1+trusty_all.deb
+
+#- name: installing zabbix repositories
+#  shell: dpkg -i zabbix-release_3.0-1+trusty_all.deb
+
+#For Ubuntu 12.04
+#- name: downloading zabbix repositories
+#  shell: wget http://repo.zabbix.com/zabbix/2.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_2.2-1+precise_all.deb
+
+#- name: installing zabbix repositories
+#  shell: dpkg -i zabbix-release_2.2-1+precise_all.deb
+
+#For all distros 
+
+- name: updating repositories and install zabbix agent
+  apt: name=zabbix-agent state=present update_cache=yes
+  become: yes  
+
+- name: copying zabbix-agent configuration file
+  template: src=zabbix_agentd.conf dest=/etc/zabbix/zabbix_agentd.conf backup=yes
+  notify: restart zabbix-agent
+  become: yes
+
+
+#Agregar inteligencia al rol y preguntar con el la opcion gather_facts si el sistema operativo es ubuntu 12.04, 14.04 o 16.04 e instalar el agente apropiado
+
+#http://tecadmin.net/install-zabbix-agent-on-ubuntu-and-debian/

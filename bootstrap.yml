@@ -1,0 +1,9 @@
+---
+- name: Bootstraping
+  hosts: 192.168.32.161 #Tiene que ser variable
+  remote_user: administrator #Tiene que ser variable
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+    - ansible-bootstrap-ubuntu-16.04

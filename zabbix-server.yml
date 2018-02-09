@@ -1,0 +1,16 @@
+---
+- name: Deploying Zabbix-Server
+  hosts: 192.168.32.161 #Tiene que ser variable
+  remote_user: administrator #Tiene que ser variable
+  become_method: sudo
+  gather_facts: yes
+
+  roles:
+    #- ssh
+    #- snmp
+    #- ntp
+    - openssl
+    - apache
+    - postgresql
+    - zabbix-server
+    #- zabbix-agent

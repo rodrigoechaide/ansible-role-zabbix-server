@@ -1,0 +1,10 @@
+---
+zabbix_server: '192.168.6.200'
+zabbix_version: '3.4.6'
+zabbix_source_url: 'https://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/3.4.6/zabbix-{{zabbix-version}}.tar.gz'
+zabbix_source_directory: '/opt/zabbix-{{zabbix-version}}'
+zabbix_conf_directory: '/etc/zabbix'
+zabbix_frontend_directory: '/var/www/html/zabbix'
+db_name: 'zabbix'
+db_user: 'zabbix'
+db_password: 'zabbix-server'

@@ -1,0 +1,12 @@
+---
+- name: start snmpd
+  service: name=snmpd state=started
+  become: yes
+
+- name: stop snmpd
+  service: name=snmpd state=stopped
+  become: yes
+
+- name: restart snmpd
+  service: name=snmpd state=restarted
+  become: yes
