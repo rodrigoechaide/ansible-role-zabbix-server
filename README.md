@@ -1,6 +1,6 @@
-# Ansible Playbook: Deploy Jira Server
+# Ansible Playbook: Deploy Zabbix Server
 
-An Ansible playbook for Deploy and optionally Upgrade Jira Server. 
+An Ansible playbook for Deploy Zabbix Server in Ubuntu 16.04 (installation from repositories) and in Raspberry Pi (Compilation from sources). 
 
 ## Requirements
 
@@ -10,11 +10,11 @@ Tested on Ubuntu 16.04. Should work on all Ubuntu versions >= 16.04.
 
 ## Playbook Variables
 
-
+Modify the file hosts.ini file, the variables inside each role and the global variables inside group_vars/zabbix_servers.yml.
 
 ## Dependencies
 
-
+No dependencies are necessary to install.
 
 ## Example usage
 
