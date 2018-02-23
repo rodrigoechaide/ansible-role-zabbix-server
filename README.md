@@ -1,6 +1,6 @@
 # Ansible Playbook: Deploy Zabbix Server
 
-An Ansible playbook for Deploy Zabbix Server in Ubuntu 16.04 (installation from repositories) and in Raspberry Pi (Compilation from sources). 
+An Ansible playbook for Deploy Zabbix Server in Ubuntu 16.04 (installation from repositories) and in Raspberry Pi (compilation from sources). 
 
 ## Requirements
 
@@ -19,5 +19,5 @@ No dependencies are necessary to install.
 ## Example usage
 
 ``` shell
-ansible-playbook site.yml -i hosts -k -K
+ansible-playbook site.yml -i hosts.ini -k -K
 ```
