@@ -1,0 +1,153 @@
+---
+- name: Checking if zabbix-server is already installed
+  stat: 
+    path: /usr/local/bin/zabbix_sender
+  register: zabbix_bin_stats
+  become: yes  
+
+- name: Unarchiving zabbix source folder
+  unarchive:
+    src: "{{zabbix_source_url}}"
+    dest: /opt
+    remote_src: yes
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Creating group for zabbix server user
+  group:
+    name: zabbix
+    state: present
+  become: yes    
+
+- name: Creating user for zabbix server
+  user:
+    name: zabbix
+    group: zabbix
+  become: yes    
+
+- name: Importing zabbix data into the database
+  shell: psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
+  become: yes
+  become_user: zabbix
+  when: zabbix_bin_stats.stat.exists == False
+  
+- name: Installing dependencies
+  apt: 
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - build-essential
+    - make
+    - gcc
+    - curl
+    - libpq-dev
+    - libxml2-dev
+    - libsnmp-dev
+    - snmp
+    - snmp-mibs-downloader    
+    - libssh2-1-dev
+    - libldap2-dev
+    - libcurl4-openssl-dev
+    - libevent-dev
+    - libpcre3-dev
+    - php7.0
+    - php7.0-fpm
+    - php7.0-gd
+    - php7.0-ldap
+    - php7.0-pgsql
+    - php7.0-mbstring
+    - php7.0-xml
+    - php7.0-bcmath
+    - libapache2-mod-php7.0
+    - apache2
+    - htop
+    - unzip
+  become: yes
+
+- name: Configurating zabbix components for compilation
+  shell: ./configure --enable-server --enable-agent --with-postgresql --with-net-snmp --with-libcurl --with-libxml2 --with-ssh2 --with-openssl --with-ldap --sysconfdir={{zabbix_conf_directory}}
+  args:
+    chdir: /opt/zabbix-{{zabbix_minor_version}}
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Compiling zabbix-server
+  shell: make install
+  args:
+    chdir: /opt/zabbix-{{zabbix_minor_version}}
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Creating zabbix-frontend directory
+  file:
+    path: "{{zabbix_frontend_directory}}"
+    state: directory
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Copying frontend files into apache root directory
+  shell: cp -r /opt/zabbix-{{zabbix_minor_version}}/frontends/php/* {{zabbix_frontend_directory}}
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Copying zabbix.conf template into apache2 conf-available directory
+  template:
+    src: zabbix.conf
+    dest: /etc/apache2/conf-available/zabbix.conf
+    backup: yes
+  notify: reload apache2
+  become: yes
+
+- name: Enabling zabbix.conf configuration file in apache2
+  command: a2enconf zabbix
+  become: yes
+  notify: reload apache2
+  when: zabbix_bin_stats.stat.exists == False
+
+- name: Copying zabbix_server.conf configuration file into {{zabbix_conf_directory}}
+  template:
+    src: zabbix_server.conf
+    dest: "{{zabbix_conf_directory}}/zabbix_server.conf"
+    backup: yes
+  become: yes
+
+- name: Copying zabbix_agentd.conf configuration file into {{zabbix_conf_directory}}
+  template:
+    src: zabbix_agentd.conf
+    dest: "{{zabbix_conf_directory}}/zabbix_agentd.conf"
+    backup: yes
+  become: yes
+
+- name: Copying zabbix.conf.php configuration file into {{zabbix_frontend_directory}}/conf
+  template: 
+    src: zabbix.conf.php 
+    dest: "{{zabbix_frontend_directory}}/conf/zabbix.conf.php" 
+    backup: yes  
+  become: yes
+  notify: restart apache2
+
+- name: Copying zabbix-server.service configuration file into /etc/systemd/system
+  template: 
+    src: zabbix-server.service 
+    dest: /etc/systemd/system/zabbix-server.service 
+    backup: yes
+  become: yes
+
+- name: Copying zabbix-agent.service configuration file into /etc/systemd/system
+  template: 
+    src: zabbix-agent.service 
+    dest: /etc/systemd/system/zabbix-agent.service 
+    backup: yes
+  become: yes
+
+- name: Enabling Zabbix Server and Zabbix Agent services
+  shell: systemctl daemon-reload && systemctl enable zabbix-server && systemctl enable zabbix-agent && systemctl start zabbix-server && systemctl start zabbix-agent
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False  
+
+
+
+#Colocar variables a todos los archivos de configuracion
+
+#Activar LDAP en zabbix.conf.php

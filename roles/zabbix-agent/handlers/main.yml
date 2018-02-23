@@ -1,12 +1,14 @@
 ---
-- name: start zabbix-agent
+
+#Zabbix Agent Handlers
+- name: zabbix-agent start 
   service: name=zabbix-agent state=started
   become: yes
 
-- name: stop zabbix-agent
+- name: zabbix-agent  stop
   service: name=zabbix-agent state=stopped
   become: yes
   
-- name: restart zabbix-agent
+- name: zabbix-agent restart
   service: name=zabbix-agent state=restarted
   become: yes

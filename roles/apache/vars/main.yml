@@ -1,5 +1,0 @@
----
-domain_name: 'zabbix.ascentio.com.ar'
-open_ssl_version: '1.0.2g'
-dhparam_location: '/etc/ssl/certs'
-document_root: '/var/www/html'

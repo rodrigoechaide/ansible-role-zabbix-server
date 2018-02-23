@@ -1,7 +1,6 @@
 ---
 - name: Bootstraping
-  hosts: 192.168.32.161 #Tiene que ser variable
-  remote_user: administrator #Tiene que ser variable
+  hosts: all
   become_method: sudo
   gather_facts: no
 

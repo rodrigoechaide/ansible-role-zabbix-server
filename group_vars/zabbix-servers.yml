@@ -1,0 +1,5 @@
+---
+#Variables comunes a todos los hosts del grupo zabbix-servers
+db_name: 'zabbix'
+db_user: 'zabbix'
+db_password: 'zabbix-server'

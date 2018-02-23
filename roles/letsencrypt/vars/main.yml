@@ -1,4 +1,0 @@
----
-letsencrypt_email: 'admin@ascentio.com.ar'
-letsencrypt_domain_flags:
-  - "-d jira.ascentio.com.ar"
