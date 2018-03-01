@@ -60,6 +60,7 @@
     - php7.0-xml
     - php7.0-bcmath
     - libapache2-mod-php7.0
+    - fping
     - apache2
     - htop
     - unzip
