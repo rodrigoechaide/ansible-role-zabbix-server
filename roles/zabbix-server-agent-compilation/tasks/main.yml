@@ -94,8 +94,12 @@
     - php7.0-xml
     - php7.0-bcmath
     - libapache2-mod-php7.0
+<<<<<<< HEAD
     - php7.0-mysql
     - libmysqlclient-dev
+=======
+    - fping
+>>>>>>> ddda697f9ca15aae3e7756aa2ffe39a9aca730e0
     - apache2
     - htop
     - unzip
