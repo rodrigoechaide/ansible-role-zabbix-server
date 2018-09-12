@@ -3,7 +3,7 @@
   stat: 
     path: /usr/local/bin/zabbix_sender
   register: zabbix_bin_stats
-  become: yes  
+  become: yes
 
 - name: Unarchiving zabbix source folder
   unarchive:
@@ -11,7 +11,7 @@
     dest: /opt
     remote_src: yes
   become: yes
-  when: zabbix_bin_stats.stat.exists == False
+  #when: zabbix_bin_stats.stat.exists == False
 
 - name: Creating group for zabbix server user
   group:
@@ -25,12 +25,46 @@
     group: zabbix
   become: yes    
 
+#- name: Importing zabbix data into the database
+#  shell: psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
+#  become: yes
+#  become_user: zabbix
+#  when: zabbix_bin_stats.stat.exists == False & db_engine == 'POSTGRESQL'
+
 - name: Importing zabbix data into the database
-  shell: psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
+  postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql
   become: yes
-  become_user: zabbix
-  when: zabbix_bin_stats.stat.exists == False
-  
+  become_user: postgres
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+
+- name: Importing zabbix data into the database
+  postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql
+  become: yes
+  become_user: postgres
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+
+- name: Importing zabbix data into the database
+  postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
+  become: yes
+  become_user: postgres
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+
+
+- name: Importing zabbix data into the database
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/schema.sql
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'          
+
+- name: Importing zabbix data into the database
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/images.sql
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'          
+
+- name: Importing zabbix data into the database
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/data.sql
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'  
+
 - name: Installing dependencies
   apt: 
     name: "{{item}}"
@@ -60,17 +94,26 @@
     - php7.0-xml
     - php7.0-bcmath
     - libapache2-mod-php7.0
+    - php7.0-mysql
+    - libmysqlclient-dev
     - apache2
     - htop
     - unzip
   become: yes
 
-- name: Configurating zabbix components for compilation
+- name: Configurating zabbix components for compilation with postgresql support
   shell: ./configure --enable-server --enable-agent --with-postgresql --with-net-snmp --with-libcurl --with-libxml2 --with-ssh2 --with-openssl --with-ldap --sysconfdir={{zabbix_conf_directory}}
   args:
     chdir: /opt/zabbix-{{zabbix_minor_version}}
   become: yes
-  when: zabbix_bin_stats.stat.exists == False
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+
+- name: Configurating zabbix components for compilation with mysql support
+  shell: ./configure --enable-server --enable-agent --with-mysql --with-net-snmp --with-libcurl --with-libxml2 --with-ssh2 --with-openssl --with-ldap --sysconfdir={{zabbix_conf_directory}}
+  args:
+    chdir: /opt/zabbix-{{zabbix_minor_version}}
+  become: yes
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
 - name: Compiling zabbix-server
   shell: make install
@@ -122,15 +165,15 @@
 - name: Copying zabbix.conf.php configuration file into {{zabbix_frontend_directory}}/conf
   template: 
     src: zabbix.conf.php 
-    dest: "{{zabbix_frontend_directory}}/conf/zabbix.conf.php" 
-    backup: yes  
+    dest: "{{zabbix_frontend_directory}}/conf/zabbix.conf.php"
+    backup: yes
   become: yes
   notify: restart apache2
 
 - name: Copying zabbix-server.service configuration file into /etc/systemd/system
-  template: 
-    src: zabbix-server.service 
-    dest: /etc/systemd/system/zabbix-server.service 
+  template:
+    src: zabbix-server.service
+    dest: /etc/systemd/system/zabbix-server.service
     backup: yes
   become: yes
 

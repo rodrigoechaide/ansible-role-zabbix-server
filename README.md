@@ -12,6 +12,8 @@ Tested on Ubuntu 16.04. Should work on all Ubuntu versions >= 16.04.
 
 Modify the file hosts.ini file, the variables inside each role and the global variables inside group_vars/zabbix_servers.yml.
 
+To change database engine modify the variable "db_engine" inside database role
+
 ## Dependencies
 
 No dependencies are necessary to install.

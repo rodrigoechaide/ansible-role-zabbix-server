@@ -1,0 +1,49 @@
+---
+
+#POSTGRESQL
+
+- name: installing dependencies
+  apt: name=python-psycopg2 state=present
+  become: yes
+  when: db_engine == 'POSTGRESQL'  
+
+- name: installing postgresql
+  apt: name=postgresql state=present
+  become: yes
+  when: db_engine == 'POSTGRESQL'
+
+- name: creating database user and password
+  become: yes
+  become_user: postgres
+  postgresql_user: name={{db_user}} password={{db_password}}
+  when: db_engine == 'POSTGRESQL'                 
+
+- name: creating database
+  become: yes
+  become_user: postgres
+  postgresql_db: name={{db_name}} owner={{db_user}} state={{db_state}}
+  when: db_engine == 'POSTGRESQL'
+
+
+#MYSQL
+
+- name: installing dependencies
+  apt: name=python-mysqldb state=present
+  become: yes
+  when: db_engine == 'MYSQL'
+
+- name: installing mysql server
+  apt: name=mysql-server state=present
+  become: yes
+  when: db_engine == 'MYSQL'
+
+- name: creating database user and password
+  become: yes
+  mysql_user: name={{db_user}} password={{db_password}}
+  when: db_engine == 'MYSQL'
+
+- name: creating database
+  become: yes
+  mysql_db: name={{db_name}} state={{db_state}}
+  when: db_engine == 'MYSQL'
+   

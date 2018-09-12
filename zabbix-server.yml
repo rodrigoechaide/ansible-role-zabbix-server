@@ -7,7 +7,8 @@
   roles:
     #- snmp
     - ntp
-    - postgresql
-    - {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
-    - {role: zabbix-server, when: ansible_architecture == "x86_64"}
-    - {role: zabbix-agent, when: ansible_architecture == "x86_64"}
+    - database
+    - zabbix-server-agent-compilation
+    #- {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
+    #- {role: zabbix-server, when: ansible_architecture == "x86_64"}
+    #- {role: zabbix-agent, when: ansible_architecture == "x86_64"}

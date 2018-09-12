@@ -2,7 +2,7 @@
 // Zabbix GUI configuration file.
 global $DB;
 
-$DB['TYPE']     = 'POSTGRESQL';
+$DB['TYPE']     = '{{db_engine}}';
 $DB['SERVER']   = 'localhost';
 $DB['PORT']     = '0';
 $DB['DATABASE'] = '{{db_name}}';
