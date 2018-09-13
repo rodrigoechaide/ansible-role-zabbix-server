@@ -1,0 +1,2 @@
+[zabbix-servers]
+192.168.32.161 ansible_ssh_pass=Sa0.C0n43 ansibe_become_pass=Sa0.C0n43
