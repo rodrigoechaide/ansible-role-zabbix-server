@@ -10,9 +10,11 @@ Tested on Ubuntu 16.04. Should work on all Ubuntu versions >= 16.04.
 
 ## Playbook Variables
 
-Modify the file hosts.ini file, the variables inside each role and the global variables inside group_vars/zabbix_servers.yml.
+Modify the file hosts.ini file, in order to select the hosts to deploy, the variables inside each role and the global variables inside group_vars/zabbix_servers.yml. To change database engine modify the variable "db_engine" inside database role.
 
-To change database engine modify the variable "db_engine" inside database role
+Database Engines Available:
+* Postgresql
+* Mysql
 
 ## Dependencies
 
