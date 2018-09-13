@@ -17,13 +17,13 @@
   group:
     name: zabbix
     state: present
-  become: yes    
+  become: yes
 
 - name: Creating user for zabbix server
   user:
     name: zabbix
     group: zabbix
-  become: yes    
+  become: yes
 
 #- name: Importing zabbix data into the database
 #  shell: psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
@@ -51,19 +51,19 @@
 
 
 - name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/schema.sql
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/schema.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
-  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'          
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
 - name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/images.sql
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/images.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
-  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'          
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
 - name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/data.sql
+  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/data.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
-  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'  
+  when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
 - name: Installing dependencies
   apt: 
@@ -94,12 +94,9 @@
     - php7.0-xml
     - php7.0-bcmath
     - libapache2-mod-php7.0
-<<<<<<< HEAD
     - php7.0-mysql
     - libmysqlclient-dev
-=======
     - fping
->>>>>>> ddda697f9ca15aae3e7756aa2ffe39a9aca730e0
     - apache2
     - htop
     - unzip

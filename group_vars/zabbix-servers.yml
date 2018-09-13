@@ -3,3 +3,4 @@
 db_name: 'zabbix'
 db_user: 'zabbix'
 db_password: 'zabbix-server'
+db_engine: 'MYSQL'

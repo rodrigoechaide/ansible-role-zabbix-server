@@ -5,4 +5,4 @@
   gather_facts: no
 
   roles:
-    - ansible-bootstrap-ubuntu-16.04
+    - ansible-bootstrap-ubuntu-16.04-18.04
