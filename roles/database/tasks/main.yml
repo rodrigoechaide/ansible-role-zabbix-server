@@ -39,10 +39,10 @@
 
 - name: creating database
   become: yes
-  mysql_db: name={{db_name}} state={{db_state}}
+  mysql_db: name={{db_name}} state={{db_state}} collation=utf8_bin encoding=utf8
   when: db_engine == 'MYSQL'
 
 - name: creating database user and password
   become: yes
-  mysql_user: name={{db_user}} password={{db_password}} collation=utf8_bin encoding=UTF-8 priv='zabbix.*:ALL,GRANT' state=present
+  mysql_user: name={{db_user}} password={{db_password}} priv='zabbix.*:ALL,GRANT' state=present
   when: db_engine == 'MYSQL'
