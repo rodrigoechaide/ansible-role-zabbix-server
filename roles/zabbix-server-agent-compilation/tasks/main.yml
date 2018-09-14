@@ -11,7 +11,7 @@
     dest: /opt
     remote_src: yes
   become: yes
-  #when: zabbix_bin_stats.stat.exists == False
+  when: zabbix_bin_stats.stat.exists == False
 
 - name: Creating group for zabbix server user
   group:
