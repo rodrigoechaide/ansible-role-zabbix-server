@@ -1,10 +1,4 @@
 ---
-db_name: 'zabbix'
-db_user: 'zabbix'
-db_password: 'zabbix-server'
-db_encoding: 'UNICODE'
 db_lc_collate: 'C'
 db_lc_ctype: 'C'
 db_template: 'template0'
-db_state: 'present'
-db_engine: 'MYSQL'

@@ -71,7 +71,7 @@
 
 - name: creating mysql database
   become: yes
-  mysql_db: name={{db_name}} state={{db_state}} collation=utf8_bin encoding=utf8
+  mysql_db: name={{db_name}} state={{db_state}} collation={{db_collation}} encoding={{db_encoding}}
   when: db_engine == 'MYSQL'
 
 - name: creating mysql database user and password

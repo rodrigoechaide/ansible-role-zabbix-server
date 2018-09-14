@@ -5,4 +5,3 @@ zabbix_source_url: 'https://sourceforge.net/projects/zabbix/files/ZABBIX%20Lates
 zabbix_source_directory: '/opt/zabbix-{{zabbix-version}}'
 zabbix_conf_directory: '/etc/zabbix'
 zabbix_frontend_directory: '/var/www/html/zabbix'
-zabbix_server_name: 'Zabbix Nodo'

@@ -25,47 +25,41 @@
     group: zabbix
   become: yes
 
-#- name: Importing zabbix data into the database
-#  shell: psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql && psql zabbix < /opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
-#  become: yes
-#  become_user: zabbix
-#  when: zabbix_bin_stats.stat.exists == False & db_engine == 'POSTGRESQL'
-
-- name: Importing zabbix data into the database
+- name: Importing schema.sql into postgresql database
   postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/schema.sql
   become: yes
   become_user: postgres
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
 
-- name: Importing zabbix data into the database
+- name: Importing images.sql into postgresql database
   postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/images.sql
   become: yes
   become_user: postgres
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
 
-- name: Importing zabbix data into the database
+- name: Importing data.sql into the postgresql database
   postgresql_db: name={{db_name}} state=restore target=/opt/zabbix-{{zabbix_minor_version}}/database/postgresql/data.sql
   become: yes
   become_user: postgres
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'POSTGRESQL'
 
 
-- name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/schema.sql login_user={{db_user}} login_password={{db_password}}
+- name: Importing schema.sql into the mysql database
+  mysql_db: name={{db_name}} state=import target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/schema.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
-- name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/images.sql login_user={{db_user}} login_password={{db_password}}
+- name: Importing images.sql into mysql database
+  mysql_db: name={{db_name}} state=import target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/images.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
-- name: Importing zabbix data into the database
-  mysql_db: state=import name={{db_name}} target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/data.sql login_user={{db_user}} login_password={{db_password}}
+- name: Importing data.sql into mysql database
+  mysql_db: name={{db_name}} state=import target=/opt/zabbix-{{zabbix_minor_version}}/database/mysql/data.sql login_user={{db_user}} login_password={{db_password}}
   become: yes
   when: zabbix_bin_stats.stat.exists == False and db_engine == 'MYSQL'
 
-- name: Installing dependencies
+- name: Installing dependencies for Ubuntu 16.04 Xenial
   apt: 
     name: "{{item}}"
     state: present
@@ -93,14 +87,53 @@
     - php7.0-mbstring
     - php7.0-xml
     - php7.0-bcmath
-    - libapache2-mod-php7.0
     - php7.0-mysql
+    - libapache2-mod-php7.0
     - libmysqlclient-dev
     - fping
     - apache2
     - htop
     - unzip
   become: yes
+  when: ansible_distribution_release == 'xenial'
+
+- name: Installing dependencies for Ubuntu 18.04 Bionic
+  apt: 
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - build-essential
+    - make
+    - gcc
+    - curl
+    - libpq-dev
+    - libxml2-dev
+    - libsnmp-dev
+    - snmp
+    - snmp-mibs-downloader    
+    - libssh2-1-dev
+    - libldap2-dev
+    - libcurl4-openssl-dev
+    - libevent-dev
+    - libpcre3-dev
+    - php7.2
+    - php7.2-fpm
+    - php7.2-gd
+    - php7.2-ldap
+    - php7.2-pgsql
+    - php7.2-mbstring
+    - php7.2-xml
+    - php7.2-bcmath
+    - php7.2-mysql
+    - libapache2-mod-php7.2
+    - libmysqlclient-dev
+    - fping
+    - apache2
+    - htop
+    - unzip
+  become: yes
+  when: ansible_distribution_release == 'bionic'
 
 - name: Configurating zabbix components for compilation with postgresql support
   shell: ./configure --enable-server --enable-agent --with-postgresql --with-net-snmp --with-libcurl --with-libxml2 --with-ssh2 --with-openssl --with-ldap --sysconfdir={{zabbix_conf_directory}}
