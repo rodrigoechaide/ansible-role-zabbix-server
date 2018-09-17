@@ -1,6 +1,6 @@
 ---
-- include: bootstrap.yml
-- include: zabbix-server.yml
+- import_playbook: bootstrap.yml
+- import_playbook: zabbix-server.yml
 
 
 

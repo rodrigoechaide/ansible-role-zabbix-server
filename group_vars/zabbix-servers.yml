@@ -3,7 +3,7 @@
 db_name: 'zabbix'
 db_user: 'zabbix'
 db_password: 'zabbix-server'
-db_engine: 'MYSQL'
+db_engine: 'POSTGRESQL'
 db_state: 'present'
 db_encoding: 'utf8'
 db_collation: 'utf8_bin'
