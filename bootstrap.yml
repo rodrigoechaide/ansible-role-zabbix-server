@@ -1,0 +1,8 @@
+---
+- name: Bootstraping
+  hosts: all
+  become_method: sudo
+  gather_facts: no
+
+  roles:
+    - ansible-bootstrap-ubuntu-16.04-18.04

@@ -1,0 +1,14 @@
+---
+#Variables comunes a todos los hosts del grupo zabbix-servers
+db_name: 'zabbix'
+db_user: 'zabbix'
+db_password: 'zabbix-server'
+db_engine: 'POSTGRESQL'
+db_state: 'present'
+db_encoding: 'utf8'
+db_collation: 'utf8_bin'
+zabbix_server_name: 'Zabbix Nodo'
+zabbix_server: 'localhost'
+zabbix_major_version: '3.4'
+zabbix_minor_version: '3.4.1'
+zabbix_repo_url: 'http://repo.zabbix.com/zabbix/{{zabbix_major_version}}/ubuntu/pool/main/z/zabbix-release/zabbix-release_{{zabbix_major_version}}-1+xenial_all.deb'

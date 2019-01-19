@@ -1,0 +1,7 @@
+---
+zabbix_major_version: '3.4'
+zabbix_minor_version: '3.4.6'
+zabbix_source_url: 'https://sourceforge.net/projects/zabbix/files/ZABBIX%20Latest%20Stable/{{zabbix_minor_version}}/zabbix-{{zabbix_minor_version}}.tar.gz'
+zabbix_source_directory: '/opt/zabbix-{{zabbix-version}}'
+zabbix_conf_directory: '/etc/zabbix'
+zabbix_frontend_directory: '/var/www/html/zabbix'

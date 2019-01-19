@@ -1,0 +1,114 @@
+---
+- name: Checking if zabbix is already installed
+  stat:
+    path: /etc/zabbix
+  register: zabbix_server_stats
+  become: yes
+
+- name: Installing dependencies
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - php7.0-pgsql
+    - php7.0-mysql
+    - php7.0-xml
+    - php7.0-bcmath
+    - php7.0-mbstring
+    - libapache2-mod-php7.0
+    - htop
+    - unzip
+  become: yes
+
+- name: Downloading e installing zabbix repositories
+  apt:
+    deb: "{{zabbix_repo_url}}"
+    state: present
+  become: yes
+
+- name: Installing zabbix server with postgresql support
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - zabbix-server-pgsql
+    - zabbix-frontend-php
+    - python-psycopg2
+  become: yes
+  when: db_engine == 'POSTGRESQL'
+
+- name: Creating postgresql database user and password
+  become: yes
+  become_user: postgres
+  postgresql_user: name={{db_user}} password={{db_password}}
+  when: db_engine == 'POSTGRESQL'
+
+- name: Creating postgresql database
+  become: yes
+  become_user: postgres
+  postgresql_db: name={{db_name}} owner={{db_user}} state={{db_state}}
+  when: db_engine == 'POSTGRESQL'
+
+- name: Importing zabbix data into the postgresql database
+  shell: zcat /usr/share/doc/zabbix-server-pgsql/create.sql.gz | psql zabbix
+  become: yes
+  become_user: zabbix
+  when: zabbix_server_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+
+- name: Installing zabbix server with mysql support
+  apt:
+    name: "{{item}}"
+    state: present
+    update_cache: yes
+  with_items:
+    - zabbix-server-mysql
+    - zabbix-frontend-php
+    - python-mysqldb
+  become: yes
+  when: db_engine == 'MYSQL'
+
+- name: creating mysql database
+  become: yes
+  mysql_db: name={{db_name}} state={{db_state}} collation={{db_collation}} encoding={{db_encoding}}
+  when: db_engine == 'MYSQL'
+
+- name: creating mysql database user and password
+  become: yes
+  mysql_user: name={{db_user}} password={{db_password}} priv='zabbix.*:ALL,GRANT' state=present
+  when: db_engine == 'MYSQL'
+
+- name: Importing zabbix data into the mysql database
+  shell: zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql -u{{db_user}} -p{{db_password}} {{db_name}}
+  become: yes
+  when: zabbix_server_stats.stat.exists == False and db_engine == 'MYSQL'
+
+- name: Starting zabbix server and enabling it on system startup
+  shell: update-rc.d zabbix-server enable
+  notify: zabbix-server start
+  become: yes
+  when: zabbix_server_stats.stat.exists == False
+
+- name: Copying zabbix_server.conf configuration file into /etc/zabbix
+  template:
+    src: zabbix_server.conf
+    dest: /etc/zabbix/zabbix_server.conf
+    backup: yes
+  notify: zabbix-server restart
+  become: yes
+
+- name: Copying zabbix.conf.php configuration file into /usr/share/zabbix/conf
+  template:
+    src: zabbix.conf.php
+    dest: /usr/share/zabbix/conf/zabbix.conf.php
+    backup: yes
+  become: yes
+
+- name: Copying apache.conf template into /etc/zabbix directory
+  template:
+    src: apache.conf
+    dest: /etc/zabbix/apache.conf
+    backup: yes
+  notify: apache2 restart
+  become: yes

@@ -1,0 +1,21 @@
+---
+- name: Downloading e installing zabbix repositories
+  apt:
+    deb: "{{zabbix_repo_url}}"
+    state: present
+  become: yes
+
+- name: Updating repositories and install zabbix agent
+  apt:
+    name: zabbix-agent
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: Copying zabbix-agent configuration file in /etc/zabbix
+  template:
+    src: zabbix_agentd.conf
+    dest: /etc/zabbix/zabbix_agentd.conf
+    backup: yes
+  notify: zabbix-agent restart
+  become: yes

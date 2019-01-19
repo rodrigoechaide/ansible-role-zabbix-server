@@ -1,0 +1,14 @@
+---
+- name: installing snmpd
+  apt: name=snmpd state=present
+  become: yes  
+
+- name: copying snmpd configuration file
+  template: backup=yes src=snmpd.conf dest=/etc/snmp/snmpd.conf
+  notify: restart snmpd
+  become: yes
+
+- name: modifying /etc/default/snmpd configuration file
+  template: backup=yes src=snmpd dest=/etc/default/snmpd
+  notify: restart snmpd
+  become: yes  
