@@ -17,9 +17,9 @@
     - balanceador.conf
     - swg-core.conf
 
-  - name: Configuring logrotate
-    template:
-      src: mikrotik-logs
-      dst: /etc/logrotate.d/
-      backup: yes
-    become: yes   
+- name: Configuring logrotate
+  template:
+    src: mikrotik-logs
+    dst: /etc/logrotate.d/
+  backup: yes
+  become: yes   
