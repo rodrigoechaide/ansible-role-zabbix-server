@@ -39,17 +39,17 @@
   become: yes
   when: db_engine == 'POSTGRESQL'
 
-- name: creating postgresql database user and password
+- name: Creating postgresql database user and password
   become: yes
   become_user: postgres
   postgresql_user: name={{db_user}} password={{db_password}}
-  when: db_engine == 'POSTGRESQL'                 
+  when: db_engine == 'POSTGRESQL'
 
-- name: creating postgresql database
+- name: Creating postgresql database
   become: yes
   become_user: postgres
   postgresql_db: name={{db_name}} owner={{db_user}} state={{db_state}}
-  when: db_engine == 'POSTGRESQL'  
+  when: db_engine == 'POSTGRESQL'
 
 - name: Importing zabbix data into the postgresql database
   shell: zcat /usr/share/doc/zabbix-server-pgsql/create.sql.gz | psql zabbix

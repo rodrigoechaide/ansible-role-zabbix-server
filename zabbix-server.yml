@@ -4,6 +4,9 @@
   become_method: sudo
   gather_facts: yes
 
+  #vars:
+  #  ansible_become_pass: Sa0.C0n43
+
   roles:
     #- snmp
     - ntp
