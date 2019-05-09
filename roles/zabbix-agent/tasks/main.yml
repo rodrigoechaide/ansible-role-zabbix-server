@@ -1,7 +1,7 @@
 ---
 - name: Downloading e installing zabbix repositories
   apt:
-    deb: "{{zabbix_repo_url}}"
+    deb: "{{ZBX_REPO_URL}}"
     state: present
   become: yes
 
