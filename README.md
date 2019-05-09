@@ -23,5 +23,5 @@ No dependencies are necessary to install.
 ## Example usage
 
 ``` shell
-ansible-playbook zabbix-server.yml -i hosts -k -K
+ansible-playbook zabbix-server-deploy.yml -i hosts -k -K
 ```
