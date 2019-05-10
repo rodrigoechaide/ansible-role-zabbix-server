@@ -7,7 +7,7 @@
 
 - name: Copying rsyslog configuration
   template:
-    src: {{ items }}
+    src: "{{ items }}"
     dest: /etc/{{ items }}
     backup: yes
   notify: restart rsyslog
