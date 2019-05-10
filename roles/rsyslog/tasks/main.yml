@@ -1,0 +1,25 @@
+---
+- name: Installing rsyslog
+  apt:
+    name: rsyslog
+    state: present
+  become: yes
+
+- name: Copying rsyslog configuration
+  template:
+    src: "{{ items }}"
+    dest: /etc/{{ items }}
+    backup: yes
+  notify: restart rsyslog
+  become: yes
+  with_items:
+    - servidor.conf
+    - balanceador.conf
+    - swg-core.conf
+
+- name: Configuring logrotate
+  template:
+    src: mikrotik-logs
+    dst: /etc/logrotate.d/
+  backup: yes
+  become: yes   
