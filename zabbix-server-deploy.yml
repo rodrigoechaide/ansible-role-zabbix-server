@@ -5,10 +5,12 @@
   gather_facts: yes
 
   roles:
-    #- snmp
     - ntp
-    #- {role: database, when: ansible_architecture == "armv7l"}
-    #- {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
-    #- {role: zabbix-server, when: ansible_architecture == "x86_64"}
+    - rsyslog
     - zabbix-server
     - zabbix-agent
+
+
+#- {role: database, when: ansible_architecture == "armv7l"}
+#- {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
+#- {role: zabbix-server, when: ansible_architecture == "x86_64"}    

@@ -1,11 +1,19 @@
 ---
 - name: Downloading e installing zabbix repositories
   apt:
-    deb: "{{ZBX_REPO_URL}}"
+    deb: "{{ZBX_REPO_URL['RASPBIAN']}}"
     state: present
   become: yes
+  when: ansible_lsb['id'] == "Raspbian" and ansible_lsb['codename'] == "stretch"
 
-- name: Updating repositories and install zabbix agent
+- name: Downloading e installing zabbix repositories
+  apt:
+    deb: "{{ZBX_REPO_URL['BIONIC']}}"
+    state: present
+  become: yes
+  when: ansible_lsb['id'] == "Ubuntu" and ansible_lsb['codename'] == "bionic"
+
+- name: Updating repositories and installing zabbix agent
   apt:
     name: zabbix-agent
     state: present

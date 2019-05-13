@@ -7,8 +7,8 @@
 
 - name: Copying rsyslog configuration
   template:
-    src: "{{ items }}"
-    dest: /etc/{{ items }}
+    src: "{{ item }}"
+    dest: /etc/{{ item }}
     backup: yes
   notify: restart rsyslog
   become: yes
@@ -20,6 +20,6 @@
 - name: Configuring logrotate
   template:
     src: mikrotik-logs
-    dst: /etc/logrotate.d/
-  backup: yes
+    dest: /etc/logrotate.d/
+    backup: yes
   become: yes   
