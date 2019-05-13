@@ -7,8 +7,14 @@
   roles:
     #- snmp
     - ntp
-    #- {role: database, when: ansible_architecture == "armv7l"}
-    #- {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
-    #- {role: zabbix-server, when: ansible_architecture == "x86_64"}
     - zabbix-server
     - zabbix-agent
+    - ntp
+    - rsyslog
+    - zabbix-server
+    - zabbix-agent
+
+
+#- {role: database, when: ansible_architecture == "armv7l"}
+#- {role: zabbix-server-agent-compilation, when: ansible_architecture == "armv7l"}
+#- {role: zabbix-server, when: ansible_architecture == "x86_64"}    

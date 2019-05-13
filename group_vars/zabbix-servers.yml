@@ -10,14 +10,17 @@ db_engine: 'MYSQL'
 db_state: 'present'
 db_encoding: 'utf8'
 db_collation: 'utf8_bin'
+ZBX_DB_IP: 'localhost'
+ZBX_SERVER_IP: 'localhost'
 ZBX_TIMEZONE: 'America/Argentina/Cordoba'
 zabbix_server_name: 'ZBX-MEGA'
-zabbix_server: 'localhost'
 zabbix_major_version: '4.2'
 zabbix_minor_version: '4.2'
-ZBX_REPO_URL: 'https://repo.zabbix.com/zabbix/4.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.2-1+bionic_all.deb'
-#zabbix_repo_url: 'https://repo.zabbix.com/zabbix/4.2/raspbian/pool/main/z/zabbix-release/zabbix-release_4.2-1+stretch_all.deb'
+ZBX_DB_RESTORE: 'TRUE' #True if we want to restore a backup from another zabbix instance and False if we don't.
+ZBX_REPO_URL: 
+  RASPBIAN: 'https://repo.zabbix.com/zabbix/4.2/raspbian/pool/main/z/zabbix-release/zabbix-release_4.2-1+stretch_all.deb'
+  BIONIC: 'https://repo.zabbix.com/zabbix/4.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_4.2-1+bionic_all.deb'
 
 #NTP Variables
-NTP_SERVER: ""
+NTP_SERVER: "192.168.40.1"
 

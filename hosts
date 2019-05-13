@@ -1,3 +1,7 @@
 [zabbix-servers]
 
+<<<<<<< HEAD
 192.168.32.232 ansible_ssh_user=administrator ansible_ssh_pass=4sc*ubuntu18 ansibe_become_pass=4sc*ubuntu18
+=======
+192.168.254.33 ansible_ssh_user=pi ansible_ssh_pass=raspberry ansibe_become_pass=raspberry
+>>>>>>> 78de1571b07deeaeb38f57e5d462513d61996f97

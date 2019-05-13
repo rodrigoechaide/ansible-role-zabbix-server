@@ -8,25 +8,23 @@
 - name: Installing dependencies
   apt:
     name: ["htop", "unzip"]
-    #name: "{{item}}"
     state: present
     update_cache: yes
-  #with_items:
-  #  - php7.0-pgsql
-  #  - php7.0-mysql
-  #  - php7.0-xml
-  #  - php7.0-bcmath
-  #  - php7.0-mbstring
-  #  - libapache2-mod-php7.0
-  #  - htop
-  #  - unzip
   become: yes
 
 - name: Downloading e installing zabbix repositories
   apt:
-    deb: "{{ZBX_REPO_URL}}"
+    deb: "{{ZBX_REPO_URL['RASPBIAN']}}"
     state: present
   become: yes
+  when: ansible_lsb['id'] == "Raspbian" and ansible_lsb['codename'] == "stretch"
+
+- name: Downloading e installing zabbix repositories
+  apt:
+    deb: "{{ZBX_REPO_URL['BIONIC']}}"
+    state: present
+  become: yes
+  when: ansible_lsb['id'] == "Ubuntu" and ansible_lsb['codename'] == "bionic"
 
 - name: Installing zabbix server with postgresql support
   apt:
@@ -53,11 +51,14 @@
     state: "{{db_state}}"
   when: db_engine == 'POSTGRESQL'
 
-- name: Importing zabbix data into the postgresql database
+#Conditional to choose between restore a backup or import default data
+- name: Importing initial zabbix data into the postgresql database
   shell: zcat /usr/share/doc/zabbix-server-pgsql/create.sql.gz | psql zabbix
   become: yes
   become_user: zabbix
-  when: zabbix_server_stats.stat.exists == False and db_engine == 'POSTGRESQL'
+  when: zabbix_server_stats.stat.exists == False and db_engine == 'POSTGRESQL' and ZBX_DB_RESTORE == 'FALSE'
+
+#Write task to restore backup if ZBX_DB_RESTORE == 'TRUE'  
 
 - name: Installing zabbix server with mysql support
   apt:
@@ -85,17 +86,19 @@
     state: present
   when: db_engine == 'MYSQL'
 
-- name: Importing zabbix data into the mysql database
+#Conditional to choose between restore a backup or import default data
+- name: Importing initial zabbix data into the mysql database
   shell: zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql -u{{db_user}} -p{{db_password}} {{db_name}}
   become: yes
-  #when: zabbix_server_stats.stat.exists == False and db_engine == 'MYSQL'
+  when: zabbix_server_stats.stat.exists == False and db_engine == 'MYSQL' and ZBX_DB_RESTORE == 'FALSE'
+
+#Write task to restore backup if ZBX_DB_RESTORE == 'TRUE'
 
 - name: Starting zabbix server and enabling it on system startup
   systemd: 
     name: zabbix-server
     enabled: yes
   become: yes
-  #when: zabbix_server_stats.stat.exists == False
 
 - name: Copying zabbix_server.conf configuration file into /etc/zabbix
   template:
