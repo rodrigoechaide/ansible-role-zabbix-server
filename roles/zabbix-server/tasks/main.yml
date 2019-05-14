@@ -7,7 +7,7 @@
 
 - name: Installing dependencies
   apt:
-    name: ["htop", "unzip"]
+    name: ['htop', 'unzip', 'git']
     state: present
     update_cache: yes
   become: yes
