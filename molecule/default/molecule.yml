@@ -1,0 +1,62 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: molecule/default/yaml-lint.yml
+platforms:
+  - name: centos8
+    image: geerlingguy/docker-centos8-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: centos7
+    image: geerlingguy/docker-centos7-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: debian10
+    image: geerlingguy/docker-debian10-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: debian9
+    image: geerlingguy/docker-debian9-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: ubuntu1804
+    image: geerlingguy/docker-ubuntu1804-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  - name: ubuntu1604
+    image: geerlingguy/docker-ubuntu1604-ansible
+    command: ""   # command: "/bin/bash -c 'while true; do sleep 1; done'"
+    privileged: true
+    pre_build_image: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    converge: playbook.yml
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

@@ -1,0 +1,6 @@
+---
+
+zabbix_server_major_version: '4.4'
+zabbix_server_minor_version: '1'
+db_engine: pgsql
+web_server: nginx

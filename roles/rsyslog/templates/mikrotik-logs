@@ -1,7 +1,0 @@
-/var/log/mikrotik-servers/*.log {
-  rotate 30
-  weekly
-  compress
-  missingok
-  notifempty
-}

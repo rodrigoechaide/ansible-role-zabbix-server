@@ -1,0 +1,45 @@
+---
+- name: Ensure dependencies are installed.
+  yum:
+    name:
+      - curl
+      - gnupg
+      - htop
+      - unzip
+    state: present
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Ensure dependencies are installed.
+  dnf:
+    name:
+      - curl
+      - gnupg
+      - htop
+      - unzip
+    state: present
+  when: ansible_pkg_mgr == 'dnf'
+
+- name: Download e install zabbix repositories
+  package:
+    name: "{{ zabbix_repo_url }}"
+    state: present
+
+- name: Install zabbix-server
+  yum:
+    name:
+      - zabbix-server-{{ db_engine }}
+      - zabbix-web-{{ db_engine }}
+      - zabbix-{{ web_server }}-conf
+      - zabbix-agent
+    state: present
+  when: ansible_pkg_mgr == 'yum'
+
+- name: Install zabbix-server
+  dnf:
+    name:
+      - zabbix-server-{{ db_engine }}
+      - zabbix-web-{{ db_engine }}
+      - zabbix-{{ web_server }}-conf
+      - zabbix-agent
+    state: present
+  when: ansible_pkg_mgr == 'dnf'

@@ -1,0 +1,64 @@
+---
+
+# Zabbix Server Handlers
+- name: zabbix-server-start
+  service:
+    name: zabbix-server
+    state: started
+
+- name: zabbix-server-stop
+  service:
+    name: zabbix-server
+    state: stopped
+
+- name: zabbix-server-restart
+  service:
+    name: zabbix-server
+    state: restarted
+
+# apache2 handlers
+- name: apache2-start
+  service:
+    name: apache2
+    state: started
+
+- name: apache2-stop
+  service:
+    name: apache2
+    state: stopped
+
+- name: apache2-restart
+  service:
+    name: apache2
+    state: restarted
+
+- name: apache2-reload
+  service:
+    name: apache2
+    state: reloaded
+
+# nginx handlers
+- name: nginx-start
+  service:
+    name: nginx
+    state: started
+
+- name: nginx-stop
+  service:
+    name: nginx
+    state: stopped
+
+- name: nginx-restart
+  service:
+    name: nginx
+    state: restarted
+
+- name: nginx-reload
+  service:
+    name: nginx
+    state: reloaded
+
+# apt cache update
+- name: update-apt-cache
+  apt:
+    update_cache: true
