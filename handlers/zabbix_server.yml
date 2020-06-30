@@ -1,0 +1,16 @@
+---
+
+- name: zabbix-server-start
+  service:
+    name: zabbix-server
+    state: started
+
+- name: zabbix-server-stop
+  service:
+    name: zabbix-server
+    state: stopped
+
+- name: zabbix-server-restart
+  service:
+    name: zabbix-server
+    state: restarted

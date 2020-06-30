@@ -1,8 +1,12 @@
 ---
+
+# Check why linter is showing alerts.
+
 - name: Ensure dependencies are installed.
   yum:
     name:
       - curl
+      - git
       - gnupg
       - htop
       - unzip
@@ -13,6 +17,7 @@
   dnf:
     name:
       - curl
+      - git
       - gnupg
       - htop
       - unzip
@@ -32,7 +37,7 @@
       - zabbix-{{ web_server }}-conf
       - zabbix-agent
     state: present
-  when: ansible_pkg_mgr == 'yum'
+  when: ansible_pkg_mgr == 'yum' and zabbix_server_version is version('4.3', '>') # check 4.3
 
 - name: Install zabbix-server
   dnf:
@@ -42,4 +47,26 @@
       - zabbix-{{ web_server }}-conf
       - zabbix-agent
     state: present
-  when: ansible_pkg_mgr == 'dnf'
+  when: ansible_pkg_mgr == 'dnf' and zabbix_server_version is version('4.3', '>') # check 4.3
+
+- name: Install zabbix-server
+  yum:
+    name:
+      - zabbix-server-{{ db_engine }}
+      - zabbix-web-{{ db_engine }}
+      - zabbix-{{ web_server }}-conf
+      - zabbix-agent
+    state: present
+  when: ansible_pkg_mgr == 'yum' and zabbix_server_version is version('4.3', '<=') # check 4.3
+
+- name: Install zabbix-server
+  dnf:
+    name:
+      - zabbix-server-{{ db_engine }}
+      - zabbix-web-{{ db_engine }}
+      - zabbix-{{ web_server }}-conf
+      - zabbix-agent
+    state: present
+  when: ansible_pkg_mgr == 'dnf' and zabbix_server_version is version('4.3', '<=') # check 4.3
+
+# check if packages to install are different between different zabbix versions

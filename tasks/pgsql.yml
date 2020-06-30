@@ -1,0 +1,34 @@
+---
+
+- name: Creating postgresql database user and password
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+
+- name: Creating postgresql database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ db_name }}"
+    owner: "{{ db_user }}"
+    state: "{{ db_state }}"
+
+
+# Check if this is the best approach to check if zbx is installed or not.
+# - name: Checking if zabbix is already installed
+#   stat:
+#     path: /etc/zabbix
+#   register: zabbix_server_stats
+#   become: yes
+
+# Before executing this tasks check if zabbix is already installed
+# #Conditional to choose between restore a backup or import default data
+# - name: Importing initial zabbix data into the postgresql database
+#   shell: zcat /usr/share/doc/zabbix-server-pgsql/create.sql.gz | psql zabbix
+#   become: yes
+#   become_user: zabbix
+#   when: zabbix_server_stats.stat.exists == False and db_engine == 'POSTGRESQL' and ZBX_DB_RESTORE == 'FALSE'
+
+# #Write task to restore backup if ZBX_DB_RESTORE == 'TRUE'    

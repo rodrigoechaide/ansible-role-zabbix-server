@@ -1,107 +1,69 @@
 ---
-# Variable setup.
+# Variable setup. Check if a file can be use for all Debian distributions (Debian, Ubuntu and Raspbian because the have the same content.)
 - name: Include OS-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+# Check if this is the best approach to check if zbx is installed or not and make idempotent creation of db
+- name: Check if zabbix is already installed
+  stat:
+    path: /etc/zabbix
+  register: zabbix_server_stats
+
 # Setup/install tasks.
-- include_tasks: setup-RedHat.yml
+- name: Include Configuration Tasks for RedHat Family Servers
+  include_tasks: setup-RedHat.yml
   when: ansible_os_family == 'RedHat'
 
-- include_tasks: setup-Debian.yml
+- name: Include Configuration Tasks for Debian Family Servers
+  include_tasks: setup-Debian.yml
   when: ansible_os_family == 'Debian'
 
-# - name: Checking if zabbix is already installed
-#   stat:
-#     path: /etc/zabbix
-#   register: zabbix_server_stats
-#   become: yes
+- name: Include Configuration Tasks for Postgresql Database
+  include_tasks: pgsql.yml
+  when: db_engine == 'pgsql'
 
+- name: Include Configuration Tasks for Mysql Database
+  include_tasks: mysql.yml
+  when: db_engine == 'mysql'
 
-# - name: Creating postgresql database user and password
-#   become: yes
-#   become_user: postgres
-#   postgresql_user:
-#     name: "{{db_user}}"
-#     password: "{{db_password}}"
-#   when: db_engine == 'POSTGRESQL'
+# Maybe it would be better to do this with lineinfile module
+- name: Copying zabbix_server.conf configuration file into /etc/zabbix
+  template:
+    src: zabbix_server.conf
+    dest: /etc/zabbix/zabbix_server.conf
+    backup: yes
+  notify: zabbix-server-restart
 
-# - name: Creating postgresql database
-#   become: yes
-#   become_user: postgres
-#   postgresql_db:
-#     name: "{{db_name}}"
-#     owner: "{{db_user}}"
-#     state: "{{db_state}}"
-#   when: db_engine == 'POSTGRESQL'
+# Maybe it would be better to do this with lineinfile module
+- name: Copying zabbix_agent.conf configuration file into /etc/zabbix
+  template:
+    src: zabbix_agent.conf
+    dest: /etc/zabbix/zabbix_agent.conf
+    backup: yes
+  notify: zabbix-agent-restart
 
-# #Conditional to choose between restore a backup or import default data
-# - name: Importing initial zabbix data into the postgresql database
-#   shell: zcat /usr/share/doc/zabbix-server-pgsql/create.sql.gz | psql zabbix
-#   become: yes
-#   become_user: zabbix
-#   when: zabbix_server_stats.stat.exists == False and db_engine == 'POSTGRESQL' and ZBX_DB_RESTORE == 'FALSE'
+# Check if this step is right to put here in main or should be put inside Debian and RedHat files
+- name: Copying zabbix.conf.php configuration file into /usr/share/zabbix/conf
+  template:
+    src: zabbix.conf.php
+    dest: /usr/share/zabbix/conf/zabbix.conf.php
+    backup: yes
+  notify: zabbix-server-restart
 
-# #Write task to restore backup if ZBX_DB_RESTORE == 'TRUE'
+- name: Copying apache.conf template into /etc/zabbix directory
+  template:
+    src: apache.conf
+    dest: /etc/zabbix/apache.conf
+    backup: yes
+  notify: apache2-restart
+  when: web_server == 'apache'
 
-# - name: Installing zabbix server with mysql support
-#   apt:
-#     name: ['zabbix-server-mysql', 'zabbix-frontend-php', 'python3-mysqldb']
-#     state: present
-#     update_cache: yes
-#   become: yes
-#   when: db_engine == 'MYSQL'
-
-# - name: creating mysql database
-#   become: yes
-#   mysql_db:
-#     name: "{{db_name}}"
-#     state: "{{db_state}}"
-#     collation: "{{db_collation}}"
-#     encoding: "{{db_encoding}}"
-#   when: db_engine == 'MYSQL'
-
-# - name: creating mysql database user and password
-#   become: yes
-#   mysql_user:
-#     name: "{{db_user}}"
-#     password: "{{db_password}}"
-#     priv: 'zabbix.*:ALL,GRANT'
-#     state: present
-#   when: db_engine == 'MYSQL'
-
-# #Conditional to choose between restore a backup or import default data
-# - name: Importing initial zabbix data into the mysql database
-#   shell: zcat /usr/share/doc/zabbix-server-mysql/create.sql.gz | mysql -u{{db_user}} -p{{db_password}} {{db_name}}
-#   become: yes
-#   when: zabbix_server_stats.stat.exists == False and db_engine == 'MYSQL' and ZBX_DB_RESTORE == 'FALSE'
-
-# #Write task to restore backup if ZBX_DB_RESTORE == 'TRUE'
-
-# - name: Starting zabbix server and enabling it on system startup
-#   systemd:
-#     name: zabbix-server
-#     enabled: yes
-#   become: yes
-
-# - name: Copying zabbix_server.conf configuration file into /etc/zabbix
-#   template:
-#     src: zabbix_server.conf
-#     dest: /etc/zabbix/zabbix_server.conf
-#     backup: yes
-#   notify: zabbix-server restart
-#   become: yes
-
-# - name: Copying zabbix.conf.php configuration file into /usr/share/zabbix/conf
-#   template:
-#     src: zabbix.conf.php
-#     dest: /usr/share/zabbix/conf/zabbix.conf.php
-#     backup: yes
-#   become: yes
-
-# - name: Copying apache.conf template into /etc/zabbix directory
-#   template:
-#     src: apache.conf
-#     dest: /etc/zabbix/apache.conf
-#     backup: yes
-#   notify: apache2 restart
-#   become: yes
+- name: Starting zabbix server and enabling it on system startup
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: yes
+  with_items:
+    - apache2
+    - zabbix-server
+    - zabbix-agent

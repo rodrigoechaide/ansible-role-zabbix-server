@@ -1,6 +1,23 @@
 ---
 
-zabbix_server_major_version: '4.4'
+# Default Zabbix Server Configurations
+zabbix_server_version: '4.4'
 zabbix_server_minor_version: '1'
+zabbix_server_ip: 'localhost'
+zabbix_timezone: 'America/Argentina/Cordoba'
+zabbix_server_name: 'zabbix-server'
+zabbix_start_pollers: 5
+
+# Default DB Configurations
 db_engine: pgsql
+db_name: zabbix
+db_password: zabbix
+db_user: zabbix
+db_encoding: 'utf8'
+db_collation: 'utf8_bin'
+db_initial_data: '/usr/share/doc/zabbix-server-mysql/create.sql.gz'
+db_state: present
+db_restore: false
+
+# Default Web Server Configurations
 web_server: nginx

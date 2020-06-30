@@ -1,0 +1,43 @@
+---
+
+- name: Create mysql database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: "{{ db_state }}"
+    collation: "{{ db_collation }}"
+    encoding: "{{ db_encoding }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+# [WARNING]: Module did not set no_log for update_password
+- name: Create mysql database user and password
+  mysql_user:
+    name: "{{ db_user }}"
+    password: "{{ db_password }}"
+    priv: 'zabbix.*:ALL,GRANT'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+# Check how to properly evaluate booleans
+
+# Check how to copy the dump file from an url
+- name: Copy a dump file
+  copy:
+    src: zabbix_cfg_127.0.0.1_20201101-0300_db-mysql-4.4.2.sql.gz
+    dest: "{{ db_backup }}"
+  when: zabbix_server_stats.stat.exists == False and db_restore == 'true'
+
+- name: Restore Database Backup
+  mysql_db:
+    name: "{{ db_name }}"
+    state: import
+    target: "{{ db_backup }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  when: zabbix_server_stats.stat.exists == False and db_restore == 'true'
+
+- name: Import initial Database Data
+  mysql_db:
+    name: "{{ db_name }}"
+    state: import
+    target: "{{ db_initial_data }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+  when: zabbix_server_stats.stat.exists == False and db_restore == 'false'
