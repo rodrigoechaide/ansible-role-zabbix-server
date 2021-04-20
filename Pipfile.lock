@@ -18,10 +18,10 @@
     "default": {
         "ansible": {
             "hashes": [
-                "sha256:2f83f8ccc50640aa41a24f6e7757ac06b0ee6189fdcaacab68851771d3b42f3a"
+                "sha256:73a271b9b2081a254deaa7347583d8bd97142b67c891e463ff2302006c5c8c38"
             ],
             "index": "pypi",
-            "version": "==2.9.2"
+            "version": "==2.9.20"
         },
         "ansible-lint": {
             "hashes": [
@@ -250,10 +250,10 @@
     "develop": {
         "ansible": {
             "hashes": [
-                "sha256:2f83f8ccc50640aa41a24f6e7757ac06b0ee6189fdcaacab68851771d3b42f3a"
+                "sha256:73a271b9b2081a254deaa7347583d8bd97142b67c891e463ff2302006c5c8c38"
             ],
             "index": "pypi",
-            "version": "==2.9.2"
+            "version": "==2.9.20"
         },
         "ansible-base": {
             "hashes": [
@@ -696,7 +696,6 @@
                 "sha256:21b81bda15b66ef5e1a777a21c4dcd9c20ad3efd0b3f817e7a809035269e1bd3",
                 "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"
             ],
-            "index": "pypi",
             "version": "==1.10.0"
         },
         "pycodestyle": {
@@ -721,7 +720,7 @@
             "version": "==2.3.1"
         },
         "pygments": {
-            "hashes": [
+            "hashes": [l
                 "sha256:2656e1a6edcdabf4275f9a3640db59fd5de107d88e8663c5d4e9a0fa62f77f94",
                 "sha256:534ef71d539ae97d4c3a4cf7d6f110f214b0e687e92f9cb9d2a3b0d3101289c8"
             ],
